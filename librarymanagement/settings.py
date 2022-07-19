@@ -39,6 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'library',
+    'rest_framework',
+    'api',
+    'crispy_forms'
 ]
 
 MIDDLEWARE = [
@@ -56,7 +59,7 @@ ROOT_URLCONF = 'librarymanagement.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATE_DIR,],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -73,14 +76,24 @@ WSGI_APPLICATION = 'librarymanagement.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
+DATABASES = {                  
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'librarydb',
+        'USER': 'root',
+        'PASSWORD': 'admin1234',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#     }
+# }
 
 
 # Password validation
@@ -124,12 +137,7 @@ STATICFILES_DIRS=[
 STATIC_DIR,
  ]
 
-LOGIN_REDIRECT_URL='/afterlogin'
 
-#for email
-EMAIL_BACKEND ='django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_USE_TLS = True
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'sumitproject1503@gmail.com'
-EMAIL_HOST_PASSWORD = 'sumityoyo'
+LOGIN_REDIRECT_URL = 'book-view'
+LOGOUT_REDIRECT_URL = 'login'
+AUTH_USER_MODEL = 'library.MyUser'

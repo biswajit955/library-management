@@ -1,20 +1,33 @@
+from re import I
 from django.db import models
 from django.contrib.auth.models import User
+from django.conf import settings
 from datetime import datetime,timedelta
+from django.contrib.auth.models import PermissionsMixin ,AbstractBaseUser
+from .manager import CustomUserManager
 
-class StudentExtra(models.Model):
-    user=models.OneToOneField(User,on_delete=models.CASCADE)
-    enrollment = models.CharField(max_length=40)
-    branch = models.CharField(max_length=40)
-    #used in issue book
+class MyUser(AbstractBaseUser, PermissionsMixin):
+    username = None 
+    email = models.EmailField('Email address',
+                                unique = True,
+                                error_messages = {
+                                   'unique': 'This email already exists.'
+                              })
+    first_name = models.CharField('First name',
+                            blank = False,
+                            max_length = 50)
+    last_name = models.CharField('Last name',
+                            blank = False,
+                            max_length = 50)
+    is_active = models.BooleanField('active', default=True)
+    is_staff = models.BooleanField(default=False)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+    objects = CustomUserManager() 
+    
     def __str__(self):
-        return self.user.first_name+'['+str(self.enrollment)+']'
-    @property
-    def get_name(self):
-        return self.user.first_name
-    @property
-    def getuserid(self):
-        return self.user.id
+        return self.email
 
 
 class Book(models.Model):
@@ -40,13 +53,6 @@ class Book(models.Model):
 
 def get_expiry():
     return datetime.today() + timedelta(days=15)
-class IssuedBook(models.Model):
-    #moved this in forms.py
-    #enrollment=[(student.enrollment,str(student.get_name)+' ['+str(student.enrollment)+']') for student in StudentExtra.objects.all()]
-    enrollment=models.CharField(max_length=30)
-    #isbn=[(str(book.isbn),book.name+' ['+str(book.isbn)+']') for book in Book.objects.all()]
-    isbn=models.CharField(max_length=30)
-    issuedate=models.DateField(auto_now=True)
-    expirydate=models.DateField(default=get_expiry)
-    def __str__(self):
-        return self.enrollment
+
+    
+
